@@ -2,10 +2,13 @@ package io.github.tobiashstbrg.shippingtracker.controller;
 
 import io.github.tobiashstbrg.shippingtracker.models.ShipmentInfo;
 import io.github.tobiashstbrg.shippingtracker.service.TrackingService;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.constraints.*;
 
 @RestController
 @RequestMapping(("/api/shipments"))
+@Validated
 public class TrackingController {
     private final TrackingService trackingService;
 
@@ -14,7 +17,13 @@ public class TrackingController {
     }
 
     @GetMapping("/{trackingNumber}")
-    public ShipmentInfo getShipment(@PathVariable String trackingNumber) {
+    public ShipmentInfo getShipment(
+            @PathVariable
+            @NotBlank(message = "Tracking number cannot be blank!")
+            @Size(min = 5, max = 50, message = "Tracking number must be between 5 and 50 characters")
+            @Pattern(regexp = "^[A-Z0-9]+$", message = "Tracking number must contain only uppercase letters and numbers")
+            String trackingNumber) {
+
         return trackingService.trackShipment(trackingNumber);
     }
 }
