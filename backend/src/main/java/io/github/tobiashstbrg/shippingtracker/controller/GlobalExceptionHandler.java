@@ -4,7 +4,7 @@ import io.github.tobiashstbrg.shippingtracker.service.ShipmentNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.apache.coyote.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import io.github.tobiashstbrg.shippingtracker.controller.dto.ErrorResponse;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.Instant;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -21,6 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleShipmentNotFound(
             ShipmentNotFoundException ex,
             HttpServletRequest request) {
+        log.info("Shipment not found: {}", ex.getMessage());
 
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(Instant.now())
@@ -37,6 +39,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericException(
             Exception ex,
             HttpServletRequest request) {
+        log.error("Unexpected error occured", ex);
 
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(Instant.now())
@@ -52,9 +55,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConstraintViolation(
             ConstraintViolationException ex,
             HttpServletRequest request) {
+
         String message = ex.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
+
+        log.info("Validation failed for {}: {}", request.getRequestURI(), message);
 
         ErrorResponse error = ErrorResponse.builder()
                 .timestamp(Instant.now())

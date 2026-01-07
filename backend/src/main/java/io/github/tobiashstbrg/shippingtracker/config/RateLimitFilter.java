@@ -3,6 +3,7 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
@@ -30,12 +32,17 @@ public class RateLimitFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String clientIp = request.getRemoteAddr();
-        Bucket bucket = buckets.computeIfAbsent(clientIp, k -> createBucket());
+        Bucket bucket = buckets.computeIfAbsent(clientIp, k -> {
+            log.debug("Creating new rate limit bucket for IP: {}", clientIp);
+            return createBucket();
+        });
+
 
         if (bucket.tryConsume(1)) {
-            // Erfolg - Request durchlassen
+            log.trace("Rate limit OK for IP: {}", clientIp);
             filterChain.doFilter(request, response);
         } else {
+            log.warn("Rate limit exceeded for IP: {}", clientIp);
             response.setStatus(429);
             response.setContentType("application/json");
             response.getWriter().write(
