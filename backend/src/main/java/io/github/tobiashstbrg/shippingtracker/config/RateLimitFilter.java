@@ -4,7 +4,6 @@ import io.github.bucket4j.Bucket;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.time.Duration;
@@ -25,6 +24,10 @@ public class RateLimitFilter extends OncePerRequestFilter {
         return Bucket.builder()
                 .addLimit(limit)
                 .build();
+    }
+
+    public void resetBuckets() {
+        buckets.clear();
     }
 
     protected void doFilterInternal(HttpServletRequest request,
