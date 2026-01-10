@@ -1,35 +1,46 @@
 import { useState } from "react";
-import "./App.css";
 import ShipmentCard from "./components/ShipmentCard";
+import type { ShipmentInfo } from "./types/shipment";
+import { fetchShipment } from "./services/shipmentService";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 function App() {
-  const [trackingNumber, setTrackingNumber] = useState("");
-  const [shipmentData, setShipmentData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState<string>("");
+  const [shipmentData, setShipmentData] = useState<ShipmentInfo | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleTrack = () => {
+  const handleTrack = async () => {
     setLoading(true);
-    fetch(`http://localhost:8080/api/shipments/${trackingNumber}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setShipmentData(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    setError(null);
+    setShipmentData(null);
+
+    try {
+      const data = await fetchShipment(trackingNumber);
+      setShipmentData(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      <input
+      <Input
         value={trackingNumber}
         onChange={(e) => setTrackingNumber(e.target.value)}
         placeholder="Enter tracking number"
       />
 
-      <button onClick={handleTrack}>Track package</button>
+      <Button variant="outline" onClick={handleTrack}>
+        Track Package
+      </Button>
 
       {loading && <p>Loading...</p>}
       {shipmentData && <ShipmentCard shipment={shipmentData} />}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </>
   );
 }

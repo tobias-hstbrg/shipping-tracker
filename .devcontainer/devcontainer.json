@@ -13,7 +13,8 @@
         "steoates.autoimport",
         "eamodio.gitlens",
         "ms-azuretools.vscode-docker",
-        "rangav.vscode-thunder-client"
+        "rangav.vscode-thunder-client",
+        "bradlc.vscode-tailwindcss"
       ],
       "settings": {
         "editor.formatOnSave": true,
