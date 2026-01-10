@@ -1,5 +1,4 @@
 import type { ShipmentInfo } from "../types/shipment";
-import ShipmentCard from "./ShipmentCard";
 
 interface ShipmentDetailsProps {
   shipmentData: ShipmentInfo | null;
