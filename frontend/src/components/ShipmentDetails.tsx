@@ -1,4 +1,12 @@
 import type { ShipmentInfo } from "../types/shipment";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
 
 interface ShipmentDetailsProps {
   shipmentData: ShipmentInfo | null;
@@ -12,16 +20,16 @@ function ShipmentDetails({
   error,
 }: ShipmentDetailsProps) {
   return (
-    <div className="w-1/4 p-8 border-l">
+    <div className="w-1/3 p-8 border-l">
       {loading && <p>Loading shipment data...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
       {shipmentData && (
         <div>
-          <h1 className="text-4xl font-bold text-blue-400">
+          <h1 className="text-4xl font-bold mb-4">
             Shipment: {shipmentData.trackingNumber}
           </h1>
-          <p>Status: {shipmentData.status}</p>
+          <p className="">Status: {shipmentData.status}</p>
           <p>Status: {shipmentData.carrier}</p>
           <p>
             From: {shipmentData.origin.city}, {shipmentData.origin.countryCode}
@@ -31,25 +39,31 @@ function ShipmentDetails({
             {shipmentData.destination.countryCode}
           </p>
 
-          <h2>History</h2>
-          <table>
-            <tr>
-              <th>Time</th>
-              <th>Location</th>
-              <th>Status</th>
-              <th>Description</th>
-            </tr>
-            {shipmentData.events.map((event, index) => (
-              <tr key={index}>
-                <td>{new Date(event.timestamp).toLocaleString()}</td>
-                <td>
-                  {event.location.city}, {event.location.countryCode}
-                </td>
-                <td>{event.status}</td>
-                <td>{event.description}</td>
-              </tr>
-            ))}
-          </table>
+          <h2 className="text-2xl font-bold mt-4">History</h2>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Time</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Description</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {shipmentData.events.map((event, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    {new Date(event.timestamp).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    {event.location.city}, {event.location.countryCode}
+                  </TableCell>
+                  <TableCell>{event.status}</TableCell>
+                  <TableCell>{event.description}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>
