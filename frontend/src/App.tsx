@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import ShipmentCard from "./components/ShipmentCard";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [shipmentData, setShipmentData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleTrack = () => {
+    setLoading(true);
+    fetch(`http://localhost:8080/api/shipments/${trackingNumber}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setShipmentData(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <input
+        value={trackingNumber}
+        onChange={(e) => setTrackingNumber(e.target.value)}
+        placeholder="Enter tracking number"
+      />
+
+      <button onClick={handleTrack}>Track package</button>
+
+      {loading && <p>Loading...</p>}
+      {shipmentData && <ShipmentCard shipment={shipmentData} />}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
