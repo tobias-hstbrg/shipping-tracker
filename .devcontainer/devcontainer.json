@@ -25,6 +25,14 @@
     }
   },
 
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  },
+
+  "mounts": [
+    "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/node/.ssh,readonly,type=bind"
+  ],
+
   "forwardPorts": [5173, 8080],
   "postCreateCommand": "cd frontend && sudo chown -R node:node node_modules && npm install",
   "remoteUser": "node"
