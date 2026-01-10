@@ -23,3 +23,5 @@ bin/
 # Application specific
 application-local.yml
 application-dev.yml
+
+/logs
