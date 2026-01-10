@@ -1,9 +1,8 @@
-import { useState } from "react";
-import ShipmentCard from "./components/ShipmentCard";
+import ShipmentDetails from "./components/ShipmentDetails";
+import TopBar from "./components/TopBar";
 import type { ShipmentInfo } from "./types/shipment";
 import { fetchShipment } from "./services/shipmentService";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 function App() {
   const [trackingNumber, setTrackingNumber] = useState<string>("");
@@ -28,19 +27,23 @@ function App() {
 
   return (
     <>
-      <Input
-        value={trackingNumber}
-        onChange={(e) => setTrackingNumber(e.target.value)}
-        placeholder="Enter tracking number"
+      <TopBar
+        trackingNumber={trackingNumber}
+        setTrackingNumber={setTrackingNumber}
+        handleTrack={handleTrack}
+        loading={loading}
       />
 
-      <Button variant="outline" onClick={handleTrack}>
-        Track Package
-      </Button>
+      <div className="flex h-screen">
+        {/*Space for the Map in the future*/}
+        <div className="flex-1"></div>
 
-      {loading && <p>Loading...</p>}
-      {shipmentData && <ShipmentCard shipment={shipmentData} />}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        <ShipmentDetails
+          shipmentData={shipmentData}
+          loading={loading}
+          error={error}
+        />
+      </div>
     </>
   );
 }
