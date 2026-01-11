@@ -1,4 +1,5 @@
 import type { ShipmentInfo } from "../types/shipment";
+import { Button } from "./ui/button";
 import {
   Table,
   TableBody,
@@ -12,12 +13,14 @@ interface ShipmentDetailsProps {
   shipmentData: ShipmentInfo | null;
   loading: boolean;
   error: string | null;
+  onClose?: () => void;
 }
 
 function ShipmentDetails({
   shipmentData,
   loading,
   error,
+  onClose,
 }: ShipmentDetailsProps) {
   return (
     <div className="w-1/3 p-8 border-l">
@@ -26,6 +29,9 @@ function ShipmentDetails({
 
       {shipmentData && (
         <div>
+          <Button onClick={onClose} variant="outline" className="mb-4">
+            X
+          </Button>
           <h1 className="text-4xl font-bold mb-4">
             Shipment: {shipmentData.trackingNumber}
           </h1>

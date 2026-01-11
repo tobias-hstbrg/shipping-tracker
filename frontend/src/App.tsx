@@ -25,6 +25,11 @@ function App() {
     }
   };
 
+  const clearShipmentDetails = () => {
+    setShipmentData(null);
+    setError(null);
+  };
+
   return (
     <>
       <TopBar
@@ -38,11 +43,14 @@ function App() {
         {/*Space for the Map in the future*/}
         <div className="flex-1"></div>
 
-        <ShipmentDetails
-          shipmentData={shipmentData}
-          loading={loading}
-          error={error}
-        />
+        {(shipmentData || loading || error) && (
+          <ShipmentDetails
+            shipmentData={shipmentData}
+            loading={loading}
+            error={error}
+            onClose={clearShipmentDetails}
+          />
+        )}
       </div>
     </>
   );
