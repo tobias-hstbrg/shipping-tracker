@@ -276,7 +276,7 @@ _(Demnächst)_
 
 Dieses Projekt ist Open Source und unter der [MIT-Lizenz](LICENSE) verfügbar.
 
-### 🙏 Danksagungen
+### 🤝 Danksagungen
 
 - Inspiriert durch die [MapLibre GL JS](https://maplibre.org/) MapCN-Komponente
 - Entwickelt mit [Spring Boot](https://spring.io/projects/spring-boot)
@@ -564,7 +564,7 @@ _(Coming soon)_
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 🙏 Acknowledgments
+## 🤝 Acknowledgments
 
 - Inspired by the [MapLibre GL JS](https://maplibre.org/) MapCN component
 - Built with [Spring Boot](https://spring.io/projects/spring-boot)
