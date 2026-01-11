@@ -1,7 +1,6 @@
 # Gradle
 .gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
 gradle-app.setting
 .gradletasknamecache
 
@@ -25,3 +24,7 @@ application-local.yml
 application-dev.yml
 
 /logs
+
+
+# Exception
+!gradle/wrapper/gradle-wrapper.jar
