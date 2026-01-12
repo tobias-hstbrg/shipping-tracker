@@ -20,7 +20,7 @@ interface TimelineProps {
 
 function getStatusIcon(statusCode: ShipmentStatus) {
   switch (statusCode) {
-    case "INFORMATION_REVIEVED":
+    case "INFORMATION_RECEIVED":
       return ClipboardCopy;
     case "IN_TRANSIT":
       return Truck;

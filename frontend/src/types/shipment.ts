@@ -1,5 +1,5 @@
 export type ShipmentStatus =
-  | "INFORMATION_REVIEVED"
+  | "INFORMATION_RECEIVED"
   | "IN_TRANSIT"
   | "OUT_FOR_DELIVERY"
   | "DELIVERED"
