@@ -1,4 +1,5 @@
 import type { ShipmentInfo } from "../types/shipment";
+import Timeline from "./timeline";
 import { Button } from "./ui/button";
 import {
   Table,
@@ -45,31 +46,8 @@ function ShipmentDetails({
             {shipmentData.destination.countryCode}
           </p>
 
-          <h2 className="text-2xl font-bold mt-4">History</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Time</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Description</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {shipmentData.events.map((event, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    {new Date(event.timestamp).toLocaleString()}
-                  </TableCell>
-                  <TableCell>
-                    {event.location.city}, {event.location.countryCode}
-                  </TableCell>
-                  <TableCell>{event.status}</TableCell>
-                  <TableCell>{event.description}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <h2 className="text-2xl font-bold mt-10">History</h2>
+          <Timeline events={shipmentData.events} />
         </div>
       )}
     </div>
