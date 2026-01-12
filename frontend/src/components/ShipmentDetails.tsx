@@ -2,6 +2,7 @@ import type { ShipmentInfo, ShipmentStatus } from "../types/shipment";
 import Timeline from "./timeline";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { X } from "lucide-react";
 
 interface ShipmentDetailsProps {
   shipmentData: ShipmentInfo | null;
@@ -42,7 +43,7 @@ function ShipmentDetails({
       {shipmentData && (
         <div>
           <Button onClick={onClose} variant="outline" className="mb-4">
-            X
+            <X />
           </Button>
           <h1 className="text-4xl font-bold mb-4">
             Shipment: {shipmentData.trackingNumber}
