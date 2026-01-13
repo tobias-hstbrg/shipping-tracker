@@ -187,9 +187,10 @@ curl http://localhost:8080/api/shipments/TRACK001
 
 **Verfügbare Mock-Trackingnummern:**
 
-- `TRACK001` - In Transit (Berlin → New York)
+- `TRACK001` - In Transit (Berlin → New Haven)
 - `TRACK002` - Zugestellt (Paris → Berlin)
 - `TRACK003` - Zur Zustellung (New York → London)
+- `TRACK004` - Zugestellt (Berlin → New York)
 
 ### 🗂️ Projektstruktur
 
@@ -475,9 +476,10 @@ curl http://localhost:8080/api/shipments/TRACK001
 
 **Available Mock Tracking Numbers:**
 
-- `TRACK001` - In Transit (Berlin → New York)
+- `TRACK001` - In Transit (Berlin → New Haven)
 - `TRACK002` - Delivered (Paris → Berlin)
 - `TRACK003` - Out for Delivery (New York → London)
+- `TRACK004` - Zugestellt (Berlin → New York)
 
 ## 🗂️ Project Structure
 

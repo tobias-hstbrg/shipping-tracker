@@ -7,9 +7,8 @@ import io.github.tobiashstbrg.shippingtracker.models.TrackingEvent;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @Service
 public class MockTrackingProvider  implements TrackingProvider{
@@ -31,146 +30,151 @@ public class MockTrackingProvider  implements TrackingProvider{
     }
 
     private void initializeMockData() {
-        Location berlin = Location.builder()
-                .city("Berlin")
-                .countryCode("DE")
-                .postalCode("10115")
-                .latitude(52.52)
-                .longitude(13.405)
-                .build();
+        ShipmentInfo track001 = buildShipmentInfo(
+                "TRACK001",
+                "DHL",
+                ShipmentStatus.IN_TRANSIT,
+                createLocation("Berlin", "DE", "10115", 52.52, 13.405),
+                Optional.of(createLocation("New Haven", "US", "06510", 41.3083, -72.9279)),
+                createLocation("Frankfurt", "DE", "60311", 50.1109, 8.6821),
+                createLocation("Paris", "FR", "75001", 48.8566, 2.3522),
+                createLocation("New York", "US", "10001", 40.7128, -74.0060)
+        );
 
-        Location london = Location.builder()
-                .city("London")
-                .countryCode("GB")
-                .postalCode("SW1A 1AA")
-                .latitude(51.5074)
-                .longitude(-0.1278)
-                .build();
+        ShipmentInfo track002 = buildShipmentInfo(
+                "TRACK002",
+                "UPS",
+                ShipmentStatus.DELIVERED,
+                createLocation("London", "GB", "EC1A", 51.5074, -0.1278),
+                Optional.of(createLocation("Paris", "FR", "75001", 48.8566, 2.3522)),
+                createLocation("Calais", "FR", "62100", 50.9513, 1.8587)
+        );
 
-        Location paris = Location.builder()
-                .city("Paris")
-                .countryCode("FR")
-                .postalCode("75001")
-                .latitude(48.8566)
-                .longitude(2.3522)
-                .build();
+        ShipmentInfo track003 = buildShipmentInfo(
+                "TRACK003",
+                "FedEx",
+                ShipmentStatus.OUT_FOR_DELIVERY,
+                createLocation("New York", "US", "10001", 40.7128, -74.0060),
+                Optional.of(createLocation("London", "GB", "EC1A", 51.5074, -0.1278)),
+                createLocation("Memphis", "US", "38116", 35.0424, -89.9767),
+                createLocation("Heathrow", "GB", "TW6", 51.4700, -0.4543)
+        );
 
-        Location newYork = Location.builder()
-                .city("New York")
-                .countryCode("US")
-                .postalCode("10001")
-                .latitude(40.7128)
-                .longitude(-74.0060)
-                .build();
+        ShipmentInfo track004 = buildShipmentInfo(
+                "TRACK004",
+                "DHL",
+                ShipmentStatus.DELIVERED,
+                createLocation("Berlin", "DE", "10115", 52.52, 13.405),
+                Optional.of(createLocation("New York", "US", "10001", 40.7128, -74.006)),
+                createLocation("Frankfurt", "DE", "60311", 50.1109, 8.6821),
+                createLocation("Paris", "FR", "75001", 48.8566, 2.3522)
+        );
 
-
-        mockData.put("TRACK001", createInTransitShipment(berlin, newYork));
-        mockData.put("TRACK002", createDeliveredShipment(london, paris));
-        mockData.put("TRACK003", createOutForDeliveryShipment(newYork, london));
+        mockData.put("TRACK001", track001);
+        mockData.put("TRACK002", track002);
+        mockData.put("TRACK003", track003);
+        mockData.put("TRACK004" ,track004);
     }
 
-    private ShipmentInfo createInTransitShipment(Location origin, Location destination) {
-        // Zwischenstopp für currentLocation
-        Location currentLocation = Location.builder()
-                .city("Frankfurt")
-                .countryCode("DE")
-                .postalCode("60311")
-                .latitude(50.1109)
-                .longitude(8.6821)
-                .build();
+    private ShipmentInfo createShippingRoute(String trackingNumber,
+                                             String carrier,
+                                             ShipmentStatus status,
+                                             Location origin,
+                                             Optional<Location> destination,
+                                             List<TrackingEvent> events) {
 
-        // Events erstellen
-        TrackingEvent event1 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(86400 * 2)) // vor 2 Tagen
-                .statusCode(ShipmentStatus.INFORMATION_RECEIVED)
-                .status("LABEL CREATED")
-                .location(origin)
-                .build();
+        // Validation
+        Objects.requireNonNull(trackingNumber, "Tracking number must be provided");
+        Objects.requireNonNull(carrier, "Carrier must be provided");
+        Objects.requireNonNull(status, "Shipment status must be provided");
+        Objects.requireNonNull(origin, "A Shipments origin must be provided");
+        Objects.requireNonNull(events, "A List of shipping events must be provided");
 
-        TrackingEvent event2 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(86400)) // vor 1 Tag
-                .statusCode(ShipmentStatus.IN_TRANSIT)
-                .status("PACKAGE IN TRANSIT")
-                .location(currentLocation)
-                .build();
-
-        return ShipmentInfo.builder()
-                .trackingNumber("TRACK001")
-                .carrier("DHL")
-                .status(ShipmentStatus.IN_TRANSIT)
+        // Build with required fields
+        var builder = ShipmentInfo.builder()
+                .trackingNumber(trackingNumber)
+                .carrier(carrier)
+                .status(status)
                 .origin(origin)
-                .destination(destination)
-                .currentLocation(currentLocation)
-                .estimatedDelivery(Instant.now().plusSeconds(86400)) // morgen
-                .events(List.of(event1, event2))
+                .events(events);
+
+        // Add optional destination if present
+        destination.ifPresent(builder::destination);
+
+        return builder.build();
+    }
+
+    private ShipmentInfo buildShipmentInfo(String trackingNumber,
+                                           String carrier,
+                                           ShipmentStatus currentStatus,
+                                           Location origin,
+                                           Optional<Location> destination,
+                                           Location... waypoints) {
+
+        // Build complete location chain
+        List<Location> allLocations = new ArrayList<>();
+        allLocations.add(origin);
+        allLocations.addAll(Arrays.asList(waypoints));
+        destination.ifPresent(allLocations::add);
+
+        // Create events from locations
+        List<TrackingEvent> events = createEventChain(
+                allLocations.toArray(new Location[0])
+        );
+
+        // Build shipment info
+        return createShippingRoute(
+                trackingNumber,
+                carrier,
+                currentStatus,
+                origin,
+                destination,
+                events
+        );
+    }
+
+    private Location createLocation(String city, String countryCode,
+                                    String postalCode, double lat, double lng) {
+        return Location.builder()
+                .city(city)
+                .countryCode(countryCode)
+                .postalCode(postalCode)
+                .latitude(lat)
+                .longitude(lng)
                 .build();
     }
 
-    private ShipmentInfo createDeliveredShipment(Location origin, Location destination) {
-        TrackingEvent event1 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(86400 * 3))
-                .statusCode(ShipmentStatus.INFORMATION_RECEIVED)
-                .status("LABEL CREATED")
-                .location(origin)
-                .build();
+    private List<TrackingEvent> createEventChain(Location... locations) {
+        List<TrackingEvent> events = new ArrayList<>();
 
-        TrackingEvent event2 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(86400 * 2))
-                .statusCode(ShipmentStatus.IN_TRANSIT)
-                .status("IN TRANSIT")
-                .location(origin)
-                .build();
+        for (int i = 0; i < locations.length; i++) {
+            events.add(TrackingEvent.builder()
+                    .timestamp(Date.from(Instant.now().minus(locations.length - i, ChronoUnit.DAYS)).toInstant())
+                    .location(locations[i])
+                    .statusCode(determineStatus(i, locations.length))
+                    .status(determineStatusText(i, locations.length))
+                    .description(determineDescription(i, locations.length))
+                    .build());
+        }
 
-        TrackingEvent event3 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(3600))
-                .statusCode(ShipmentStatus.DELIVERED)
-                .status("DELIVERED")
-                .location(destination)
-                .description("Package delivered to recipient")
-                .build();
-
-        return ShipmentInfo.builder()
-                .trackingNumber("TRACK002")
-                .carrier("DHL")
-                .status(ShipmentStatus.DELIVERED)
-                .origin(origin)
-                .destination(destination)
-                .currentLocation(destination)
-                .events(List.of(event1, event2, event3))
-                .build();
+        return events;
     }
 
-    private ShipmentInfo createOutForDeliveryShipment(Location origin, Location destination) {
-        TrackingEvent event1 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(86400 * 3))
-                .statusCode(ShipmentStatus.INFORMATION_RECEIVED)
-                .status("LABEL CREATED")
-                .location(origin)
-                .build();
+    private ShipmentStatus determineStatus(int index, int total) {
+        if (index == 0) return ShipmentStatus.INFORMATION_RECEIVED;
+        if (index == total - 1) return ShipmentStatus.DELIVERED;
+        return ShipmentStatus.IN_TRANSIT;
+    }
 
-        TrackingEvent event2 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(86400 * 2))
-                .statusCode(ShipmentStatus.IN_TRANSIT)
-                .status("IN TRANSIT")
-                .location(origin)
-                .build();
+    private String determineStatusText(int index, int total) {
+        if (index == 0) return "Label Created";
+        if (index == total - 1) return "Delivered";
+        return "In Transit";
+    }
 
-        TrackingEvent event3 = TrackingEvent.builder()
-                .timestamp(Instant.now().minusSeconds(3600))
-                .statusCode(ShipmentStatus.OUT_FOR_DELIVERY)
-                .status("OUT FOR DELIVERY")
-                .location(destination)
-                .description("Package in delivery vehicle")
-                .build();
-
-        return ShipmentInfo.builder()
-                .trackingNumber("TRACK003")
-                .carrier("DHL")
-                .status(ShipmentStatus.OUT_FOR_DELIVERY)
-                .origin(origin)
-                .destination(destination)
-                .currentLocation(destination)
-                .events(List.of(event1, event2, event3))
-                .build();
+    private String determineDescription(int index, int total) {
+        if (index == 0) return "Shipment information received";
+        if (index == total - 1) return "Package delivered to recipient";
+        return "Package in transit";
     }
 }
