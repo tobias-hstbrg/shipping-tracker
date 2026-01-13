@@ -2,7 +2,9 @@ import ShipmentDetails from "./components/ShipmentDetails";
 import TopBar from "./components/TopBar";
 import type { ShipmentInfo } from "./types/shipment";
 import { fetchShipment } from "./services/shipmentService";
+import { Map, MapControls } from "./components/ui/map";
 import { useState } from "react";
+import ShipmentMap from "./components/ShipmentMap";
 
 function App() {
   const [trackingNumber, setTrackingNumber] = useState<string>("");
@@ -40,9 +42,25 @@ function App() {
       />
 
       <div className="flex h-screen">
-        {/*Space for the Map in the future*/}
-        <div className="flex-1"></div>
-
+        <div className="flex-1">
+          {shipmentData ? (
+            <ShipmentMap
+              origin={{
+                latitude: shipmentData?.origin.latitude || 0,
+                longitude: shipmentData?.origin.longitude || 0,
+              }}
+              destination={{
+                latitude: shipmentData?.destination.latitude || 0,
+                longitude: shipmentData?.destination.longitude || 0,
+              }}
+              events={shipmentData?.events || []}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              Enter a tracking number to view shipment details.
+            </div>
+          )}
+        </div>
         {(shipmentData || loading || error) && (
           <ShipmentDetails
             shipmentData={shipmentData}
