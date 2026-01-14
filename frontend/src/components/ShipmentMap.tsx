@@ -1,5 +1,13 @@
 import type { TrackingEvent } from "@/types/shipment";
-import { Map, MapControls, MapRoute, MapMarker, MarkerTooltip } from "./ui/map";
+import {
+  Map,
+  MapControls,
+  MapRoute,
+  MapMarker,
+  MarkerTooltip,
+  MarkerContent,
+} from "./ui/map";
+import { MapPin } from "lucide-react";
 
 interface ShipmentMapProps {
   origin: {
@@ -49,7 +57,9 @@ export default function ShipmentMap({
           longitude={destination.longitude}
           latitude={destination.latitude}
         >
-          <div className="size-4 rounded-full bg-red-500 border-2 border-white shadow-lg" />
+          <MarkerContent>
+            <div className="size-4 rounded-full bg-red-500 border-2 border-white shadow-lg" />
+          </MarkerContent>
           <MarkerTooltip>Destination</MarkerTooltip>
         </MapMarker>
 
@@ -60,7 +70,9 @@ export default function ShipmentMap({
             longitude={event.location.longitude}
             latitude={event.location.latitude}
           >
-            <div className="size-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
+            <MarkerContent>
+              <div className="size-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
+            </MarkerContent>
             <MarkerTooltip>
               {event.location.city} - {event.status}
             </MarkerTooltip>
