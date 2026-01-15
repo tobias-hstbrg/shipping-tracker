@@ -32,7 +32,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="flex flex-col h-screen">
       <TopBar
         trackingNumber={trackingNumber}
         setTrackingNumber={setTrackingNumber}
@@ -40,19 +40,19 @@ function App() {
         loading={loading}
       />
 
-      <div className="flex h-screen">
-        <div className="flex-1">
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <div className="w-full md:flex-1 h-200 md:h-full">
           {shipmentData ? (
             <ShipmentMap
               origin={{
-                latitude: shipmentData?.origin.latitude || 0,
-                longitude: shipmentData?.origin.longitude || 0,
+                latitude: shipmentData.origin.latitude,
+                longitude: shipmentData.origin.longitude,
               }}
               destination={{
-                latitude: shipmentData?.destination.latitude || 0,
-                longitude: shipmentData?.destination.longitude || 0,
+                latitude: shipmentData.destination.latitude,
+                longitude: shipmentData.destination.longitude,
               }}
-              events={shipmentData?.events || []}
+              events={shipmentData.events}
             />
           ) : (
             <div className="flex items-center justify-center h-full text-gray-500">
@@ -60,16 +60,20 @@ function App() {
             </div>
           )}
         </div>
+
+        {/* Details Section - shown alongside map */}
         {(shipmentData || loading || error) && (
-          <ShipmentDetails
-            shipmentData={shipmentData}
-            loading={loading}
-            error={error}
-            onClose={clearShipmentDetails}
-          />
+          <div className="w-full md:w-1/3 overflow-y-auto">
+            <ShipmentDetails
+              shipmentData={shipmentData}
+              loading={loading}
+              error={error}
+              onClose={clearShipmentDetails}
+            />
+          </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 
