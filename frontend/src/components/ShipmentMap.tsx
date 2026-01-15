@@ -7,7 +7,7 @@ import {
   MarkerTooltip,
   MarkerContent,
 } from "./ui/map";
-import { MapPin } from "lucide-react";
+import * as turf from "@turf/turf";
 
 interface ShipmentMapProps {
   origin: {
@@ -21,16 +21,50 @@ interface ShipmentMapProps {
   events: Array<TrackingEvent>;
 }
 
+function createArcBetweenPoints(
+  startLongitude: number,
+  startLatitude: number,
+  endLongitude: number,
+  endLatitude: number,
+  numPoints: number = 50
+): [number, number][] {
+  const start = turf.point([startLongitude, startLatitude]);
+  const end = turf.point([endLongitude, endLatitude]);
+
+  // generate the route arc
+  const arc = turf.greatCircle(start, end, { npoints: numPoints });
+
+  // return coordinates
+  return arc.geometry.coordinates as [number, number][];
+}
+
 export default function ShipmentMap({
   origin,
   destination,
   events,
 }: ShipmentMapProps) {
-  // Build route coordinates from events
-  const routeCoordinates: [number, number][] = events.map((event) => [
-    event.location.longitude,
-    event.location.latitude,
-  ]);
+  // Build arced route from events
+  const routeCoordinates: [number, number][] = [];
+
+  for (let i = 0; i < events.length - 1; i++) {
+    const currentEvent = events[i];
+    const nextEvent = events[i + 1];
+
+    const arc = createArcBetweenPoints(
+      currentEvent.location.longitude,
+      currentEvent.location.latitude,
+      nextEvent.location.longitude,
+      nextEvent.location.latitude,
+      200 // number of points in the arc
+    );
+
+    if (i === 0) {
+      routeCoordinates.push(...arc);
+    } else {
+      // Avoid duplicating the starting point of the arc
+      routeCoordinates.push(...arc.slice(1));
+    }
+  }
 
   // Calculate center point for map
   const centerLng = (origin.longitude + destination.longitude) / 2;
