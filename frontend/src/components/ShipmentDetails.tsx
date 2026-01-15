@@ -43,7 +43,7 @@ function ShipmentDetails({
   onClose,
 }: ShipmentDetailsProps) {
   return (
-    <div className="w-1/3 p-8 border-l">
+    <div className="overflow-y-hidden p-8 w-full overflow-hidden">
       {loading && <p>Loading shipment data...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
@@ -53,10 +53,12 @@ function ShipmentDetails({
             <X />
           </Button>
 
-          <Card className="p-4 mb-6">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold mb-1">
-                Shipment: {shipmentData.trackingNumber}
+          <Card className="p-2 sm:p-4 mb-6 overflow-hidden">
+            <CardHeader className="space-y-2">
+              <CardTitle className="text-xl md:text-3xl font-bold wrap-break-words">
+                <h1 className="font-bold">
+                  Shipment: {shipmentData.trackingNumber}
+                </h1>
               </CardTitle>
               <CardDescription>
                 <Badge className={`p-2 ${getStatusColor(shipmentData.status)}`}>
@@ -65,13 +67,13 @@ function ShipmentDetails({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <Package className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Carrier:</span>
                 <span className="font-semibold">{shipmentData.carrier}</span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Origin:</span>
                 <span className="font-semibold">
@@ -79,7 +81,7 @@ function ShipmentDetails({
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   Destination:
