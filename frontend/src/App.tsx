@@ -2,7 +2,6 @@ import ShipmentDetails from "./components/ShipmentDetails";
 import TopBar from "./components/TopBar";
 import type { ShipmentInfo } from "./types/shipment";
 import { fetchShipment } from "./services/shipmentService";
-import { Map, MapControls } from "./components/ui/map";
 import { useState } from "react";
 import ShipmentMap from "./components/ShipmentMap";
 
