@@ -43,7 +43,7 @@ function ShipmentDetails({
   onClose,
 }: ShipmentDetailsProps) {
   return (
-    <div className="w-1/3 p-8 border-l">
+    <div className="overflow-y-hidden p-8 border-l">
       {loading && <p>Loading shipment data...</p>}
       {error && <p className="text-red-500">{error}</p>}
 

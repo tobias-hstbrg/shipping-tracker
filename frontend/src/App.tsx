@@ -61,9 +61,8 @@ function App() {
           )}
         </div>
 
-        {/* Details Section - shown alongside map */}
         {(shipmentData || loading || error) && (
-          <div className="w-full md:w-1/3 overflow-y-auto">
+          <div className="w-full md:w-7/24 overflow-y-auto">
             <ShipmentDetails
               shipmentData={shipmentData}
               loading={loading}
