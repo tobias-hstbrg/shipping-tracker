@@ -43,7 +43,7 @@ function ShipmentDetails({
   onClose,
 }: ShipmentDetailsProps) {
   return (
-    <div className="overflow-y-hidden p-8 w-full border-l overflow-hidden">
+    <div className="overflow-y-hidden p-8 w-full overflow-hidden">
       {loading && <p>Loading shipment data...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
@@ -56,10 +56,9 @@ function ShipmentDetails({
           <Card className="p-2 sm:p-4 mb-6 overflow-hidden">
             <CardHeader className="space-y-2">
               <CardTitle className="text-xl md:text-3xl font-bold wrap-break-words">
-                <span className="text-muted-foreground font-normal">
-                  Shipment:{" "}
-                </span>
-                {shipmentData.trackingNumber}
+                <h1 className="font-bold">
+                  Shipment: {shipmentData.trackingNumber}
+                </h1>
               </CardTitle>
               <CardDescription>
                 <Badge className={`p-2 ${getStatusColor(shipmentData.status)}`}>

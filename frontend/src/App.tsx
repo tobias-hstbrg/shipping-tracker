@@ -62,7 +62,7 @@ function App() {
         </div>
 
         {(shipmentData || loading || error) && (
-          <div className="w-full md:w-7/24 overflow-y-auto">
+          <div className="w-full md:w-7/24 h-full overflow-y-auto border-l">
             <ShipmentDetails
               shipmentData={shipmentData}
               loading={loading}
