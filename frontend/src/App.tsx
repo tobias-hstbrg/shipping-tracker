@@ -43,7 +43,7 @@ function App() {
         />
 
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-          <div className="w-full md:flex-1 h-200 md:h-full">
+          <div className="w-full md:flex-1 h-100 md:h-full">
             {shipmentData ? (
               <ShipmentMap
                 origin={{
