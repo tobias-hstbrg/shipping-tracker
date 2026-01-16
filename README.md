@@ -48,11 +48,11 @@ Dies ist eine Fullstack Web-App zur Sendungsverfolgung und Visualisierung von Pa
 - ✅ Responsive UI mit shadcn Komponenten
 - ✅ Echtzeit-Sendungsverfolgung
 - ✅ Event-Timeline-Visualisierung
+- ✅ MapLibre GL JS Integration - Interaktive Karte mit Versandrouten
 
 #### Geplante Features
 
-- 🔜 **MapLibre GL JS Integration** - Interaktive Karte mit Versandrouten
-- 🔜 **DHL Unified Shipping API** - Echte Sendungsverfolgung
+- 🔜 DHL Unified Shipping API - Echte Sendungsverfolgung
 - 🔜 Weitere Versanddienstleister (FedEx, UPS, etc.)
 - 🔜 Sendungssuchverlauf
 - 🔜 Multi-Sendungsverfolgung
@@ -253,9 +253,9 @@ _(Demnächst)_
 
 #### Phase 2: Karten-Visualisierung 🔜
 
-- [ ] MapLibre GL JS integrieren
-- [ ] Sendungsroute auf Karte anzeigen
-- [ ] Tracking-Events als Karten-Marker anzeigen
+- [x] MapLibre GL JS integrieren
+- [x] Sendungsroute auf Karte anzeigen
+- [x] Tracking-Events als Karten-Marker anzeigen
 - [ ] Sendungsfortschritt animieren
 
 #### Phase 3: Echte API-Integration 🔜
@@ -337,11 +337,11 @@ This is a full-stack web app for tracking and visualizing packages. The idea ori
 - ✅ Responsive UI with shadcn components
 - ✅ Real-time shipment tracking display
 - ✅ Event timeline visualization
+- ✅ MapLibre GL JS integration - Interactive map showing shipment routes
 
 ### Planned Features
 
-- 🔜 **MapLibre GL JS integration** - Interactive map showing shipment routes
-- 🔜 **DHL Unified Shipping API** - Real shipment tracking
+- 🔜 DHL Unified Shipping API - Real shipment tracking
 - 🔜 Additional shipping providers (FedEx, UPS, etc.)
 - 🔜 Shipment search history
 - 🔜 Multi-shipment tracking
@@ -542,9 +542,9 @@ _(Coming soon)_
 
 ### Phase 2: Map Visualization 🔜
 
-- [ ] Integrate MapLibre GL JS
-- [ ] Display shipment route on map
-- [ ] Show tracking events as map markers
+- [x] Integrate MapLibre GL JS
+- [x] Display shipment route on map
+- [x] Show tracking events as map markers
 - [ ] Animate shipment progress
 
 ### Phase 3: Real API Integration 🔜
