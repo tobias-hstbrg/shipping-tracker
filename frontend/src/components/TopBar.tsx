@@ -1,3 +1,4 @@
+import { ModeToggle } from "./theme-mode-toggle";
 import { Input } from "./ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -15,9 +16,9 @@ function TopBar({
   loading,
 }: TopBarProps) {
   return (
-    <div className="sticky top-0 bg-gray-50 border-b z-10">
+    <div className="sticky top-0 bg-gray-50 dark:bg-gray-950 border-b z-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4">
-        <h1 className="text-2xl md:text-3xl font-bold whitespace-nowrap">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 whitespace-nowrap">
           Shipment Tracker
         </h1>
 
@@ -31,6 +32,7 @@ function TopBar({
           <Button variant="outline" onClick={handleTrack} disabled={loading}>
             {loading ? "Tracking..." : "Track Package"}
           </Button>
+          <ModeToggle />
         </div>
       </div>
     </div>
