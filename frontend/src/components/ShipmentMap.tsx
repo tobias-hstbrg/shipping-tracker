@@ -90,15 +90,37 @@ export default function ShipmentMap({
     return () => clearInterval(interval);
   }, [fullRouteCoordinates]);
 
-  // Calculate center point for map
-  const centerLng = (origin.longitude + destination.longitude) / 2;
-  const centerLat = (origin.latitude + destination.latitude) / 2;
+  // Calculate bounding box
+  const bounds = useMemo(() => {
+    const lngs = events.map((e) => e.location.longitude);
+    const lats = events.map((e) => e.location.latitude);
+
+    return {
+      minLng: Math.min(...lngs),
+      maxLng: Math.max(...lngs),
+      minLat: Math.min(...lats),
+      maxLat: Math.max(...lats),
+    };
+  }, [events]);
+
+  // Calculate center from bounds
+  const centerLng = (bounds.minLng + bounds.maxLng) / 2;
+  const centerLat = (bounds.minLat + bounds.maxLat) / 2;
+
+  // Calculate appropriate zoom level
+  const lngDiff = bounds.maxLng - bounds.minLng;
+  const latDiff = bounds.maxLat - bounds.minLat;
+  const maxDiff = Math.max(lngDiff, latDiff);
+
+  // Rough zoom calculation (adjust as needed)
+  const initialZoom =
+    maxDiff > 100 ? 2 : maxDiff > 50 ? 3 : maxDiff > 20 ? 4 : 5;
 
   return (
     <div className="h-full w-full">
       <Map
         center={[centerLng, centerLat]}
-        zoom={4}
+        zoom={initialZoom}
         minZoom={2}
         maxZoom={10}
         maxPitch={60}
