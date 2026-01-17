@@ -99,6 +99,9 @@ export default function ShipmentMap({
       <Map
         center={[centerLng, centerLat]}
         zoom={4}
+        minZoom={2}
+        maxZoom={10}
+        maxPitch={60}
         styles={{
           light:
             "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
