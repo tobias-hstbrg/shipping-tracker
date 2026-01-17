@@ -36,6 +36,15 @@ function getStatusColor(status: ShipmentStatus) {
   }
 }
 
+const STATUS_LABELS: Record<ShipmentStatus, string> = {
+  INFORMATION_RECEIVED: "Information received",
+  IN_TRANSIT: "In transit",
+  OUT_FOR_DELIVERY: "Out for delivery",
+  DELIVERED: "Package delivered",
+  EXCEPTION: "There is an issue with this shipment.",
+  UNKNOWN: "The shipment status is currently unavailable.",
+};
+
 function ShipmentDetails({
   shipmentData,
   loading,
@@ -62,7 +71,8 @@ function ShipmentDetails({
               </CardTitle>
               <CardDescription>
                 <Badge className={`p-2 ${getStatusColor(shipmentData.status)}`}>
-                  {shipmentData.status}
+                  {STATUS_LABELS[shipmentData.status] ??
+                    "Status cannot be displayed."}
                 </Badge>
               </CardDescription>
             </CardHeader>
