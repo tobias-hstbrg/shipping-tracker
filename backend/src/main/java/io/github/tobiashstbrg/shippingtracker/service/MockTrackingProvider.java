@@ -170,9 +170,9 @@ public class MockTrackingProvider  implements TrackingProvider{
             events.add(TrackingEvent.builder()
                     .timestamp(Date.from(Instant.now().minus(daysAgo - i, ChronoUnit.DAYS)).toInstant())
                     .location(locations[i])
-                    .statusCode(determineEventStatus(i, locations.length))
-                    .status(determineEventStatusText(i, locations.length))
-                    .description(determineEventDescription(i, locations.length))
+                    .statusCode(determineEventStatus(i))
+                    .status(determineEventStatusText(i))
+                    .description(determineEventDescription(i))
                     .build());
         }
 
@@ -208,17 +208,17 @@ public class MockTrackingProvider  implements TrackingProvider{
             return events;
     }
 
-    private ShipmentStatus determineEventStatus(int index, int total) {
+    private ShipmentStatus determineEventStatus(int index) {
         if (index == 0) return ShipmentStatus.INFORMATION_RECEIVED;
         return ShipmentStatus.IN_TRANSIT;
     }
 
-    private String determineEventStatusText(int index, int total) {
+    private String determineEventStatusText(int index) {
         if (index == 0) return "Information received";
         return "In Transit";
     }
 
-    private String determineEventDescription(int index, int total) {
+    private String determineEventDescription(int index) {
         if (index == 0) return "Shipment information received";
         return "Package in transit";
     }
