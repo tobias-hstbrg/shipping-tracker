@@ -209,6 +209,8 @@ shipping-tracker/
 ├── frontend/                 # React + Vite Anwendung
 │   ├── src/
 │   │   ├── components/      # React-Komponenten
+|   |   ├── hooks            # Custom Hooks
+|   |   ├── lib              # Hilfsfunktionen
 │   │   ├── services/        # API Service Layer
 │   │   ├── types/           # TypeScript Interfaces
 │   │   ├── App.tsx
@@ -256,7 +258,7 @@ _(Demnächst)_
 - [x] MapLibre GL JS integrieren
 - [x] Sendungsroute auf Karte anzeigen
 - [x] Tracking-Events als Karten-Marker anzeigen
-- [ ] Sendungsfortschritt animieren
+- [x] Sendungsfortschritt animieren
 
 #### Phase 3: Echte API-Integration 🔜
 
@@ -498,6 +500,8 @@ shipping-tracker/
 ├── frontend/                 # React + Vite application
 │   ├── src/
 │   │   ├── components/      # React components
+|   |   ├── hooks            # Custom Hooks
+|   |   ├── lib              # Helper functions
 │   │   ├── services/        # API service layer
 │   │   ├── types/           # TypeScript interfaces
 │   │   ├── App.tsx
@@ -545,7 +549,7 @@ _(Coming soon)_
 - [x] Integrate MapLibre GL JS
 - [x] Display shipment route on map
 - [x] Show tracking events as map markers
-- [ ] Animate shipment progress
+- [x] Animate shipment progress
 
 ### Phase 3: Real API Integration 🔜
 
