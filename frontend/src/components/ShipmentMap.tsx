@@ -8,6 +8,7 @@ import {
   MarkerContent,
 } from "./ui/map";
 import * as turf from "@turf/turf";
+import React, { useEffect, useMemo } from "react";
 
 interface ShipmentMapProps {
   origin: {
@@ -26,7 +27,7 @@ function createArcBetweenPoints(
   startLatitude: number,
   endLongitude: number,
   endLatitude: number,
-  numPoints: number = 50
+  numPoints: number = 50,
 ): [number, number][] {
   const start = turf.point([startLongitude, startLatitude]);
   const end = turf.point([endLongitude, endLatitude]);
@@ -43,28 +44,51 @@ export default function ShipmentMap({
   destination,
   events,
 }: ShipmentMapProps) {
-  // Build arced route from events
-  const routeCoordinates: [number, number][] = [];
+  const [animatedCoordinates, setAnimatedCoordinates] = React.useState<
+    [number, number][]
+  >([]);
 
-  for (let i = 0; i < events.length - 1; i++) {
-    const currentEvent = events[i];
-    const nextEvent = events[i + 1];
+  const fullRouteCoordinates: [number, number][] = useMemo(() => {
+    const coords: [number, number][] = [];
 
-    const arc = createArcBetweenPoints(
-      currentEvent.location.longitude,
-      currentEvent.location.latitude,
-      nextEvent.location.longitude,
-      nextEvent.location.latitude,
-      200 // number of points in the arc
-    );
+    for (let i = 0; i < events.length - 1; i++) {
+      const arc = createArcBetweenPoints(
+        events[i].location.longitude,
+        events[i].location.latitude,
+        events[i + 1].location.longitude,
+        events[i + 1].location.latitude,
+        80, // number of points in the arc
+      );
 
-    if (i === 0) {
-      routeCoordinates.push(...arc);
-    } else {
-      // Avoid duplicating the starting point of the arc
-      routeCoordinates.push(...arc.slice(1));
+      if (i === 0) {
+        coords.push(...arc);
+      } else {
+        // Avoid duplicating the starting point of the arc
+        coords.push(...arc.slice(1));
+      }
     }
-  }
+    return coords;
+  }, [events]);
+
+  useEffect(() => {
+    if (fullRouteCoordinates.length === 0) return;
+
+    let currentIndex = 0;
+    const totalPoints = fullRouteCoordinates.length;
+    const animationSpeed = 10;
+
+    const interval = setInterval(() => {
+      currentIndex++;
+
+      setAnimatedCoordinates(fullRouteCoordinates.slice(0, currentIndex));
+
+      if (currentIndex >= totalPoints) {
+        clearInterval(interval);
+      }
+    }, animationSpeed);
+
+    return () => clearInterval(interval);
+  }, [fullRouteCoordinates]);
 
   // Calculate center point for map
   const centerLng = (origin.longitude + destination.longitude) / 2;
@@ -82,7 +106,7 @@ export default function ShipmentMap({
         }}
       >
         <MapRoute
-          coordinates={routeCoordinates}
+          coordinates={animatedCoordinates}
           color="#3b82f6"
           width={4}
           opacity={0.8}
