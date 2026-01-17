@@ -110,14 +110,16 @@ export default function ShipmentMap({
       >
         <MapRoute
           coordinates={animatedCoordinates}
-          color="#3b82f6"
+          color="#edb90c"
           width={4}
           opacity={0.8}
         />
 
         {/* Origin marker */}
         <MapMarker longitude={origin.longitude} latitude={origin.latitude}>
-          <div className="size-4 rounded-full bg-green-500 border-2 border-white shadow-lg" />
+          <MarkerContent>
+            <div className="size-4 rounded-full bg-green-500 border-2 border-white shadow-lg" />
+          </MarkerContent>
           <MarkerTooltip>Origin</MarkerTooltip>
         </MapMarker>
 
@@ -133,20 +135,22 @@ export default function ShipmentMap({
         </MapMarker>
 
         {/* Event markers */}
-        {events.map((event, index) => (
-          <MapMarker
-            key={index}
-            longitude={event.location.longitude}
-            latitude={event.location.latitude}
-          >
-            <MarkerContent>
-              <div className="size-4 rounded-full bg-blue-500 border-2 border-white shadow-lg" />
-            </MarkerContent>
-            <MarkerTooltip>
-              {event.location.city} - {event.status}
-            </MarkerTooltip>
-          </MapMarker>
-        ))}
+        {events
+          .filter((_, index) => index !== 0 && index !== events.length - 1)
+          .map((event, index) => (
+            <MapMarker
+              key={index}
+              longitude={event.location.longitude}
+              latitude={event.location.latitude}
+            >
+              <MarkerContent>
+                <div className="size-4 rounded-full bg-orange-500 border-2 border-white shadow-lg" />
+              </MarkerContent>
+              <MarkerTooltip>
+                {event.location.city} - {event.status}
+              </MarkerTooltip>
+            </MapMarker>
+          ))}
 
         <MapControls
           position="bottom-right"
