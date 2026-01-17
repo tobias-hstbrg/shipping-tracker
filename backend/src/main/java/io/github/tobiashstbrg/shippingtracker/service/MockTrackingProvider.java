@@ -70,10 +70,19 @@ public class MockTrackingProvider  implements TrackingProvider{
                 createLocation("Paris", "FR", "75001", 48.8566, 2.3522)
         );
 
+        ShipmentInfo track005 = buildShipmentInfo(
+                "TRACK005",
+                "UPS",
+                ShipmentStatus.INFORMATION_RECEIVED,
+                createLocation("Paris", "FR", "75001", 48.8566, 2.3522),
+                Optional.of(createLocation("Frankfurt", "DE", "60311", 50.1109, 8.6821))
+        );
+
         mockData.put("TRACK001", track001);
         mockData.put("TRACK002", track002);
         mockData.put("TRACK003", track003);
         mockData.put("TRACK004" ,track004);
+        mockData.put("TRACK005" ,track005);
     }
 
     private ShipmentInfo createShippingRoute(String trackingNumber,
@@ -115,12 +124,20 @@ public class MockTrackingProvider  implements TrackingProvider{
         List<Location> allLocations = new ArrayList<>();
         allLocations.add(origin);
         allLocations.addAll(Arrays.asList(waypoints));
-        destination.ifPresent(allLocations::add);
 
         // Create events from locations
         List<TrackingEvent> events = createEventChain(
+                currentStatus,
+                destination,
                 allLocations.toArray(new Location[0])
         );
+
+        if((currentStatus == ShipmentStatus.DELIVERED || currentStatus == ShipmentStatus.OUT_FOR_DELIVERY) &&
+        destination.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Destination required for status: " + currentStatus
+            );
+        }
 
         // Build shipment info
         return createShippingRoute(
@@ -144,37 +161,66 @@ public class MockTrackingProvider  implements TrackingProvider{
                 .build();
     }
 
-    private List<TrackingEvent> createEventChain(Location... locations) {
+    private List<TrackingEvent> createEventChain(ShipmentStatus currentStatus,Optional<Location> destination, Location... locations) {
         List<TrackingEvent> events = new ArrayList<>();
+        int daysAgo = locations.length + 2;
 
         for (int i = 0; i < locations.length; i++) {
+
             events.add(TrackingEvent.builder()
-                    .timestamp(Date.from(Instant.now().minus(locations.length - i, ChronoUnit.DAYS)).toInstant())
+                    .timestamp(Date.from(Instant.now().minus(daysAgo - i, ChronoUnit.DAYS)).toInstant())
                     .location(locations[i])
-                    .statusCode(determineStatus(i, locations.length))
-                    .status(determineStatusText(i, locations.length))
-                    .description(determineDescription(i, locations.length))
+                    .statusCode(determineEventStatus(i, locations.length))
+                    .status(determineEventStatusText(i, locations.length))
+                    .description(determineEventDescription(i, locations.length))
                     .build());
         }
 
-        return events;
+        if(currentStatus == ShipmentStatus.DELIVERED && destination.isPresent()) {
+            Location dest = destination.get();
+
+            events.add(TrackingEvent.builder()
+                    .timestamp(Instant.now().minus(1, ChronoUnit.DAYS))
+                    .location(dest)
+                    .statusCode(ShipmentStatus.OUT_FOR_DELIVERY)
+                    .status("Out for delivery")
+                    .description("Package out for delivery")
+                    .build());
+
+            events.add(TrackingEvent.builder()
+                    .timestamp(Instant.now())
+                    .location(dest)
+                    .statusCode(ShipmentStatus.DELIVERED)
+                    .status("Delivered")
+                    .description("Package delivered to recipient")
+                    .build());
+            }// If out for delivery, add one event at destination
+            else if (currentStatus == ShipmentStatus.OUT_FOR_DELIVERY && destination.isPresent()) {
+                events.add(TrackingEvent.builder()
+                        .timestamp(Instant.now())
+                        .location(destination.get())
+                        .statusCode(ShipmentStatus.OUT_FOR_DELIVERY)
+                        .status("Out for Delivery")
+                        .description("Package out for delivery")
+                        .build());
+            }
+
+            return events;
     }
 
-    private ShipmentStatus determineStatus(int index, int total) {
+    private ShipmentStatus determineEventStatus(int index, int total) {
         if (index == 0) return ShipmentStatus.INFORMATION_RECEIVED;
-        if (index == total - 1) return ShipmentStatus.DELIVERED;
         return ShipmentStatus.IN_TRANSIT;
     }
 
-    private String determineStatusText(int index, int total) {
-        if (index == 0) return "Label Created";
-        if (index == total - 1) return "Delivered";
+    private String determineEventStatusText(int index, int total) {
+        if (index == 0) return "Information received";
         return "In Transit";
     }
 
-    private String determineDescription(int index, int total) {
+    private String determineEventDescription(int index, int total) {
         if (index == 0) return "Shipment information received";
-        if (index == total - 1) return "Package delivered to recipient";
         return "Package in transit";
     }
+
 }
