@@ -54,6 +54,7 @@ function App() {
                   latitude: shipmentData.destination.latitude,
                   longitude: shipmentData.destination.longitude,
                 }}
+                currentStatus={shipmentData.status}
                 events={shipmentData.events}
               />
             ) : (
