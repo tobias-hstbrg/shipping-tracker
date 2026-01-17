@@ -7,8 +7,8 @@ import {
   MarkerTooltip,
   MarkerContent,
 } from "./ui/map";
-import * as turf from "@turf/turf";
-import React, { useEffect, useMemo } from "react";
+import { useRouteAnimation } from "@/hooks/useRouteAnimation";
+import { useMapBounds } from "@/hooks/useMapBounds";
 
 interface ShipmentMapProps {
   origin: {
@@ -22,105 +22,18 @@ interface ShipmentMapProps {
   events: Array<TrackingEvent>;
 }
 
-function createArcBetweenPoints(
-  startLongitude: number,
-  startLatitude: number,
-  endLongitude: number,
-  endLatitude: number,
-  numPoints: number = 50,
-): [number, number][] {
-  const start = turf.point([startLongitude, startLatitude]);
-  const end = turf.point([endLongitude, endLatitude]);
-
-  // generate the route arc
-  const arc = turf.greatCircle(start, end, { npoints: numPoints });
-
-  // return coordinates
-  return arc.geometry.coordinates as [number, number][];
-}
-
 export default function ShipmentMap({
   origin,
   destination,
   events,
 }: ShipmentMapProps) {
-  const [animatedCoordinates, setAnimatedCoordinates] = React.useState<
-    [number, number][]
-  >([]);
-
-  const fullRouteCoordinates: [number, number][] = useMemo(() => {
-    const coords: [number, number][] = [];
-
-    for (let i = 0; i < events.length - 1; i++) {
-      const arc = createArcBetweenPoints(
-        events[i].location.longitude,
-        events[i].location.latitude,
-        events[i + 1].location.longitude,
-        events[i + 1].location.latitude,
-        80, // number of points in the arc
-      );
-
-      if (i === 0) {
-        coords.push(...arc);
-      } else {
-        // Avoid duplicating the starting point of the arc
-        coords.push(...arc.slice(1));
-      }
-    }
-    return coords;
-  }, [events]);
-
-  useEffect(() => {
-    if (fullRouteCoordinates.length === 0) return;
-
-    let currentIndex = 0;
-    const totalPoints = fullRouteCoordinates.length;
-    const animationSpeed = 10;
-
-    const interval = setInterval(() => {
-      currentIndex++;
-
-      setAnimatedCoordinates(fullRouteCoordinates.slice(0, currentIndex));
-
-      if (currentIndex >= totalPoints) {
-        clearInterval(interval);
-      }
-    }, animationSpeed);
-
-    return () => clearInterval(interval);
-  }, [fullRouteCoordinates]);
-
-  // Calculate bounding box
-  const bounds = useMemo(() => {
-    const lngs = events.map((e) => e.location.longitude);
-    const lats = events.map((e) => e.location.latitude);
-
-    return {
-      minLng: Math.min(...lngs),
-      maxLng: Math.max(...lngs),
-      minLat: Math.min(...lats),
-      maxLat: Math.max(...lats),
-    };
-  }, [events]);
-
-  // Calculate center from bounds
-  const centerLng = (bounds.minLng + bounds.maxLng) / 2;
-  const centerLat = (bounds.minLat + bounds.maxLat) / 2;
-
-  // Calculate appropriate zoom level
-  const lngDiff = bounds.maxLng - bounds.minLng;
-  const latDiff = bounds.maxLat - bounds.minLat;
-  const maxDiff = Math.max(lngDiff, latDiff);
-
-  // Rough zoom calculation (adjust as needed)
-  const initialZoom =
-    maxDiff > 100 ? 2 : maxDiff > 50 ? 3 : maxDiff > 20 ? 4 : 5;
-
+  const animatedCoordinates = useRouteAnimation(events);
+  const { center, zoom } = useMapBounds(events);
   return (
     <div className="h-full w-full">
       <Map
-        center={[centerLng, centerLat]}
-        zoom={initialZoom}
+        center={center}
+        zoom={zoom}
         minZoom={2}
         maxZoom={10}
         maxPitch={60}
