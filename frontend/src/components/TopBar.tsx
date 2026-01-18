@@ -1,6 +1,7 @@
 import { ModeToggle } from "./theme-mode-toggle";
 import { Input } from "./ui/input";
 import { Button } from "@/components/ui/button";
+import SettingsDialog from "./SettingsDialog";
 
 interface TopBarProps {
   trackingNumber: string;
@@ -32,6 +33,7 @@ function TopBar({
 
         <div className="justify-self-end">
           <ModeToggle />
+          <SettingsDialog />
         </div>
 
         <div className="col-span-2 sm:col-span-1 sm:col-start-2 sm:row-start-1">
