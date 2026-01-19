@@ -191,6 +191,7 @@ curl http://localhost:8080/api/shipments/TRACK001
 - `TRACK002` - Zugestellt (Paris → Berlin)
 - `TRACK003` - Zur Zustellung (New York → London)
 - `TRACK004` - Zugestellt (Berlin → New York)
+- `TRACK005` - Informationen erhalten (Paris → Frankfurt)
 
 ### 🗂️ Projektstruktur
 
@@ -287,7 +288,7 @@ Dieses Projekt ist Open Source und unter der [MIT-Lizenz](LICENSE) verfügbar.
 
 ### 📧 Kontakt
 
-**Tobias** - [GitHub](https://github.com/tobias.hstbrg)
+**Tobias** - [GitHub](https://github.com/tobias-hstbrg)
 
 ---
 
@@ -481,7 +482,8 @@ curl http://localhost:8080/api/shipments/TRACK001
 - `TRACK001` - In Transit (Berlin → New Haven)
 - `TRACK002` - Delivered (Paris → Berlin)
 - `TRACK003` - Out for Delivery (New York → London)
-- `TRACK004` - Zugestellt (Berlin → New York)
+- `TRACK004` - Delivered (Berlin → New York)
+- `TRACK005` - Informationen received (Paris → Frankfurt)
 
 ## 🗂️ Project Structure
 
@@ -578,7 +580,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📧 Contact
 
-**Tobias** - [GitHub](https://github.com/tobias.hstbrg)
+**Tobias** - [GitHub](https://github.com/tobias-hstbrg)
 
 ---
 
