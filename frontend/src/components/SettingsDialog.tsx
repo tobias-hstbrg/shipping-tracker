@@ -16,8 +16,11 @@ import { Label } from "@/components/ui/label";
 export default function SettingsDialog() {
   const [isMockMode, setIsMockMode] = useState(true);
   const [dhlApiKey, setDhlApiKey] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSave = async () => {
+    setIsSaving(true);
+
     // Send to backend
     const settings = {
       mockMode: isMockMode,
@@ -25,7 +28,7 @@ export default function SettingsDialog() {
     };
 
     try {
-      const response = await fetch("/api/settings", {
+      const response = await fetch("http://localhost:8080/api/settings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -34,10 +37,15 @@ export default function SettingsDialog() {
       });
 
       if (response.ok) {
-        console.log("Settings saved!");
+        const data = await response.json();
+        console.log("Settings saved!", data);
+      } else {
+        console.error("Failed to save settings");
       }
     } catch (error) {
       console.error("Failed to save settings:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -96,7 +104,9 @@ export default function SettingsDialog() {
             </div>
           )}
           <div className="flex justify-end gap-2">
-            <Button type="submit">Save Settings</Button>
+            <Button type="submit" disabled={isSaving}>
+              {isSaving ? "Saving..." : "Save Settings"}
+            </Button>
           </div>
         </form>
       </DialogContent>

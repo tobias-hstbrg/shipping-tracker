@@ -4,12 +4,14 @@ import io.github.tobiashstbrg.shippingtracker.models.Location;
 import io.github.tobiashstbrg.shippingtracker.models.ShipmentInfo;
 import io.github.tobiashstbrg.shippingtracker.models.ShipmentStatus;
 import io.github.tobiashstbrg.shippingtracker.models.TrackingEvent;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+@Primary
 @Service
 public class MockTrackingProvider  implements TrackingProvider{
     private final Map<String, ShipmentInfo> mockData;
