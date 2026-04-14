@@ -1,6 +1,10 @@
 # Shipping Tracker
-
 [English](#english) | [Deutsch](#deutsch)
+
+<img src="/images//shipping_tracker_dark.png" alt="Shipping tracker darkmode screenshot" height="500" />
+
+
+<img src="/images/shipping_tracker_light.png" alt="Shipping tracker lightmode screenshot" height="500" />
 
 ---
 
